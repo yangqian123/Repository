@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+repositories {
+    //公司maven仓库
+    maven {
+        url 'http://10.73.1.87:8088/nexus/content/groups/public/'
+    }
+    //阿里云镜像
+    maven {
+        url 'http://maven.aliyun.com/nexus/content/groups/public/'
+    }
+    maven {
+        url 'https://repo.spring.io/libs-milestone'
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group 'com.cisdi.data'
+version '1.0-SNAPSHOT'
+
+//打包源码
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+publishing {
+    repositories {
+        maven {
+            if (project.version.endsWith('-SNAPSHOT')) {
+                url = "http://10.73.1.87:8088/nexus/content/repositories/snapshots"
+            } else {
+                url = "http://10.73.1.87:8088/nexus/content/repositories/releases"
+            }
+            credentials  {
+                username 'admin'
+                password 'cisdi@2017'
+            }
+        }
+    }
+}
+
+dependencies {
+   
+    compile('com.oracle:ojdbc6:12.1.0.1-atlassian-hosted')
+    compile('com.cisdi.data:dacoo-data-sdk:1.0-SNAPSHOT')
+  //  testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+
+jar{
+    enabled = true
+  
+}
+//打包
+task runnbale(type: Jar) {
+    from files(sourceSets.main.output.classesDirs)
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+    manifest {
+        attributes 'Main-Class': 'com.cisdi.data.plc.test.StartPlcTest'
+       
+    }
+    exclude('LICENSE.txt', 'NOTICE.txt', 'rootdoc.txt')
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+
+    exclude 'META-INF/NOTICE', 'META-INF/NOTICE.txt'
+
+    exclude 'META-INF/LICENSE', 'META-INF/LICENSE.txt'
+
+    exclude 'META-INF/DEPENDENCIES'
+}
+//指定编译的编码
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+}

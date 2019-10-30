@@ -1,0 +1,24 @@
+gateway:
+  parameter: {"listenIp":"127.0.0.1","listenPort":5002,"threadSize":50,"timeout":2000}
+  senddc:
+  heartbeatkey: "999999"
+  jhykey:
+  yieldkey: "0000017"
+oracle:
+  oracleuser: zjjk
+  pwd: zjjk
+  driver: oracle.jdbc.driver.OracleDriver
+  URL: jdbc:oracle:thin:@10.73.9.80:1521:orcl
+
+
+
+
+
+
+
+
+
+
+
+
+
