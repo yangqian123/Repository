@@ -25,11 +25,17 @@ public class PlcFrameDecoder extends ByteToMessageDecoder  {
 		this.byteOrder = byteOrder;
 	}
 	
-	// 41 byte 长度报文头
-	private static final short Min_Length = 41;
+	// 30 byte 长度报文头
+	/**
+	 * 最小长度30
+	 */
+	private static final short Min_Length = 30;
 	
-	// 41 byte 长度，最大允许8192 Byte,防止攻击
-	private static final short Max_Length = 8192 + 41;
+	// 30 byte 长度，最大允许8192 Byte,防止攻击
+	/**
+	 * 修改Max_Length = 8192 + 30
+	 */
+	private static final short Max_Length = 8192 + 30;
 	
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf bufferIn, List<Object> out) throws Exception {
@@ -79,13 +85,18 @@ public class PlcFrameDecoder extends ByteToMessageDecoder  {
 		}
 
 		final int beginIndex = bufferIn.readerIndex();
-
+        /**
+         * 修改报文长度字符数
+         */
 		byte[] headerBytes = new byte[4];
 		bufferIn.readBytes(headerBytes);
 
 		String header = new String(headerBytes, CharsetUtil.US_ASCII);
 
 		// 解析headerString
+        /**
+         * 修改报文长度
+         */
 		String lendthString = getString(header, 0, 4);
 
 		int length = 0;
@@ -103,9 +114,12 @@ public class PlcFrameDecoder extends ByteToMessageDecoder  {
 
 		if(length < Min_Length) {
 			ctx.close();
-			throw new BusinessException(ctx.channel().toString()+  "传输数据体长度小于41，长度字段必须为有符号short，此长度为:" + length);
+			throw new BusinessException(ctx.channel().toString()+  "传输数据体长度小于29，长度字段必须为有符号short，此长度为:" + length);
 		}
 
+        /**
+         * 修改拆包长度：4
+         */
 		if (bufferIn.readableBytes() < length - 4) { // 拆包
 			bufferIn.readerIndex(beginIndex);
 			return;

@@ -17,7 +17,7 @@ public class PlcSessionFactory extends AbstractSessionFactory {
     private String pwd;
     private String driver;
     private String url;
-    private String sendDC;
+    private String fun;
     private String heartbeatkey;
     private String jhykey;
     private String yieldkey;
@@ -27,7 +27,7 @@ public class PlcSessionFactory extends AbstractSessionFactory {
         super();
     }
 
-    public   PlcSessionFactory(String user,String pwd,String driver,String url,String sendDC,String heartbeatkey,String jhykey,String yieldkey,String waterkey){
+    public   PlcSessionFactory(String user,String pwd,String driver,String url,String fun,String heartbeatkey,String jhykey,String yieldkey,String waterkey){
         super();
         this.user=user;
         this.pwd=pwd;
@@ -35,7 +35,7 @@ public class PlcSessionFactory extends AbstractSessionFactory {
         this.url=url;
         this.heartbeatkey=heartbeatkey;
         this.jhykey=jhykey;
-        this.sendDC=sendDC;
+        this.fun=fun;
         this.yieldkey=yieldkey;
         this.waterkey=waterkey;
     }
@@ -72,12 +72,12 @@ public class PlcSessionFactory extends AbstractSessionFactory {
         this.url = url;
     }
 
-    public String getSendDC() {
-        return sendDC;
+    public String getFun() {
+        return fun;
     }
 
-    public void setSendDC(String sendDC) {
-        this.sendDC = sendDC;
+    public void setFun(String fun) {
+        this.fun = fun;
     }
 
     public String getHeartbeatkey() {

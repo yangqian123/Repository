@@ -27,18 +27,23 @@ public class StartPlcTest {
 	public static void main(String[] args) {
 		boolean available = OpenSsl.isAvailable();
 		logger.info("openssl available={}", available);
-		String user="zjjk";
-		String pwd="zjjk";
+		//集控20数据库
+//		String user="zjjk";
+//		String pwd="zjjk";
+        //String url="jdbc:oracle:thin:@10.11.11.20:1521:orcl";
+		//公司数据库测试使用
+        String user="testzjjk";
+        String pwd="testzjjk";
+        String url="jdbc:oracle:thin:@10.73.9.80:1521:orcl";
 		String parameter ="{\"listenIp\":\"0.0.0.0\",\"listenPort\":5002,\"threadSize\":50,\"timeout\":2000}";
 		String driver="oracle.jdbc.driver.OracleDriver";
-		String url="jdbc:oracle:thin:@10.11.11.20:1521:orcl";
-		String sendDC="";//此版本未使用
+		String fun="A";//用于应答电文功能码为A
 		String heartbeatkey="999999";//此版本未使用
-		String jhykey="KMKW01";
-		String yieldkey="KMKW02";
-		String waterkey="KMKW03";
+		String jhykey="KYKW01";
+		String yieldkey="KYKW02";
+		String waterkey="KYKW03";
 		DefaultTcpIoService defaultIoService = new DefaultTcpIoService();
-		SessionFactory factory = new PlcSessionFactory(user,pwd,driver,url,sendDC,heartbeatkey,jhykey,yieldkey,waterkey);
+		SessionFactory factory = new PlcSessionFactory(user,pwd,driver,url,fun,heartbeatkey,jhykey,yieldkey,waterkey);
 		ServiceProviderTest testServiceProvider = new ServiceProviderTest();
 		factory.init(testServiceProvider, null);
 		PlcChannelInitializer<PlcVo> channelInitializer =

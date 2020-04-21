@@ -13,8 +13,7 @@ public class PlcVo implements Serializable {
 	private String time; //时间
 	private String sendDC;//发送端主机的描述码
 	private String revDC;//接收端主机的描述码
-	private String seq;// 顺序号
-	private String reserved; // 保留字段
+	private String fun;// 传输功能码
 	private String body;
 
 
@@ -79,20 +78,13 @@ public class PlcVo implements Serializable {
 		this.revDC = revDC;
 	}
 
-	public String getSeq() {
-		return seq;
+	public String getFun() {
+		return fun;
 	}
 
-	public void setSeq(String seq) {
-		this.seq = seq;
-	}
-
-	public String getReserved() {
-		return reserved;
-	}
-
-	public void setReserved(String reserved) {
-		this.reserved = reserved;
+	public String setFun(String fun) {
+		this.fun = fun;
+		return fun;
 	}
 
 	@Override

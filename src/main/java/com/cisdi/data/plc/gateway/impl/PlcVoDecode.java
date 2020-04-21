@@ -18,10 +18,11 @@ import java.util.Map;
 * @version 1.0
  */
 public class PlcVoDecode {
-	static Map<String,String> map=new HashMap<>();
 	public static PlcVo Decode(ByteBuf in, ByteOrder byteOrder) {
-
-		byte[] headerBytes = new byte[40];
+        /**
+         * 根据宝能29号规约，报文头的属性长度29
+         */
+		byte[] headerBytes = new byte[29];
 		in.readBytes(headerBytes);
 
 		String header = new String(headerBytes, CharsetUtil.US_ASCII);
@@ -77,28 +78,27 @@ public class PlcVoDecode {
 //			result.setTime(time);
 //			result.setDate(date);
 			// 解析headerString
+
+        /**
+         * 根据宝能29号规约，修改报文头的属性长度
+         */
 			String lendthString = getString(header, 0, 4);
 			String msgKey = getString(header, 4, 10);
 			String date = getString(header, 10, 18);
 			String time = getString(header, 18, 24);
 			String sendDc = getString(header, 24, 26);
 			String revDC = getString(header, 26, 28);
-			String seq = getString(header, 28, 32);
-			String reserved = getString(header, 32, 40);
-
+			String fun = getString(header, 28, 29);
 			length = Integer.valueOf(lendthString);
-
 			result.setLength(length);
 			result.setMsgKey(msgKey);
 			result.setDate(date);
 			result.setTime(time);
 			result.setSendDC(sendDc);
 			result.setRevDC(revDC);
-			result.setSeq(seq);
-			result.setReserved(reserved);
-
-			if (length > 41) {
-				int bodyLength = length - 41;
+			result.setFun(fun);
+			if (length > 30) {
+				int bodyLength = length - 30;
 				byte[] bodyBytes = new byte[bodyLength];
 				in.readBytes(bodyBytes);
 				String body = new String(bodyBytes, CharsetUtil.US_ASCII);

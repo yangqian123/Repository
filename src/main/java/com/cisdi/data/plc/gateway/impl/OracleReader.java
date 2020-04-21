@@ -1,4 +1,5 @@
 package com.cisdi.data.plc.gateway.impl;
+import oracle.sql.DATE;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
@@ -148,56 +149,7 @@ public class OracleReader {
 
         return ;
     }
-    public  long  secondnum(String msgkey){
-        long secondnum=0;
-        String sql="select num from(select A.*, ROWNUM RN  " +
-                " from (select *  from s_sockettest where msgkey= ? order by creat_time desc) A  " +
-                " where ROWNUM <= 2)  " +
-                " WHERE RN >1 ";
-        try
-        {
-            pre=conn.prepareStatement(sql);
-            pre.setString(1,msgkey);
-           ResultSet myresult =pre.executeQuery();
-           myresult.next();
-          secondnum= myresult.getLong(num);
-           // log.info("sql写入当前电文条数数据语句执行成功");
-        }
-        catch (Exception e)
-        {
-            log.error("【DB】SQL语句"+sql+"执行失败，数据表是否更改:"+e.getLocalizedMessage());
-        }
 
-        return secondnum;
-    }
-
-
-    //插入当前电文号的电文条数
-    public void updatanum(String msgkey,String date,long num){
-        String sql="update  s_sockettest set rec_num=(?-(select num from(  " +
-                "select A.*, ROWNUM RN  " +
-                "from (select *  from s_sockettest where msgkey= ? order by creat_time desc) A  " +
-                "where ROWNUM <= 2) " +
-                "WHERE RN >1 )) where msgkey=? and rev_date= ? ";
-        try
-        {
-            pre=conn.prepareStatement(sql);
-            pre.setLong(1,num);
-            pre.setString(2,msgkey);
-            pre.setString(3,msgkey);
-            pre.setDate(4, new java.sql.Date(sdf.parse(date).getTime()));
-
-            pre.execute();
-            log.info("sql写入当前电文条数数据语句执行成功");
-        }
-        catch (Exception e)
-        {
-            log.error("【DB】SQL语句"+sql+"执行失败，数据表是否更改:"+e.getLocalizedMessage());
-        }
-
-        return ;
-
-    }
 
 //插入报文条数
     public void insertnum(String msgkey,String date,long num)
@@ -382,6 +334,113 @@ public class OracleReader {
 
         return ;
     }
+
+    //修改为s_tele_date表,插入方法
+    public void insetTeleData(String index_id,double value,String rectime)
+    {
+        String sql=" begin update S_TELE_DATA t set t.value=? where t.TELE_ID=? and " +
+                "t.START_TIME=? ; " +
+                " if sql%notfound then  " +
+                "insert into " +
+                "S_TELE_DATA(TELE_ID,VALUE,START_TIME) values " +
+                "(?,?,?); " +
+                " end if;end;";
+        try
+        {
+            pre=conn.prepareStatement(sql);
+            pre.setDouble(1,value);
+            pre.setString(2,index_id);
+            pre.setDate(3, new java.sql.Date(sdf.parse(rectime).getTime()));
+            pre.setString(4,index_id);
+            pre.setDouble(5,value);
+            pre.setDate(6, new java.sql.Date(sdf.parse(rectime).getTime()));
+            pre.execute();
+            log.info("sql:"+sql+"写入数据成功");
+        }
+        catch (Exception e)
+        {
+            log.error("【DB】SQL语句插入数据执行失败，数据表是否更改:"+e.getLocalizedMessage());
+        }
+
+        return ;
+    }
+    //查询每个电文标识tele_id对应的开始时间最新的那条，并返回开始时间最新的那条。
+    public  void  UpdateEndTIME(String index_id,String rectime){
+
+//        String sql=" update S_TELE_DATA t set t.END_TIME=?  where t.TELE_ID=?and " +
+//                " t.START_TIME= (select START_TIME from (select START_TIME from S_TELE_DATA where TELE_ID=? ORDER BY START_TIME desc) where ROWNUM=1) ";
+
+
+        String sql=" update S_TELE_DATA t set t.END_TIME=?  where t.TELE_ID=?and " +
+                " t.START_TIME=?";
+        try
+        {   java.util.Date startTime=sdf.parse(getNewStartTime(index_id));
+            java.util.Date endTme=sdf.parse(rectime);
+            if(endTme.after(startTime)){
+                pre=conn.prepareStatement(sql);
+                pre.setDate(1, new java.sql.Date(sdf.parse(rectime).getTime()));
+                pre.setString(2,index_id);
+                pre.setDate(3,new java.sql.Date(startTime.getTime()));
+                pre.executeQuery();
+            }
+        }
+        catch (Exception e)
+        {
+            log.error("【DB】SQL语句更新结束时间执行失败，数据表是否更改:"+e.getLocalizedMessage());
+        }
+        return;
+    }
+
+
+    public String getNewStartTime(String index_id)
+    {
+        ResultSet myResult=null;
+        String starTime=null;
+
+        String sqlStarTime="select START_TIME from (select START_TIME from S_TELE_DATA where TELE_ID=? ORDER BY START_TIME desc) where ROWNUM=1";
+        try
+        {
+
+            pre=conn.prepareStatement(sqlStarTime);
+            pre.setString(1,index_id);
+            myResult=pre.executeQuery();
+            myResult.next();
+            starTime= sdf.format(myResult.getDate("START_TIME"));
+
+        }
+        catch (Exception e)
+        {
+            log.error("【DB】SQL语句"+sqlStarTime+"执行失败，数据表是否更改:"+e.getLocalizedMessage());
+        }
+
+        return starTime;
+    }
+
+
+    public int getNum(String index_id)
+    {
+        ResultSet myResult=null;
+        Integer nums=null;
+
+        String sql=" select count(*) from S_TELE_DATA where tele_id=?";
+        try
+        {
+            pre=conn.prepareStatement(sql);
+            pre.setString(1,index_id);
+            myResult=pre.executeQuery();
+            myResult.next();
+            nums= myResult.getInt("count(*)");
+
+        }
+        catch (Exception e)
+        {
+            log.error("【DB】SQL语句"+sql+"执行失败，数据表是否更改:"+e.getLocalizedMessage());
+        }
+
+        return nums;
+    }
+
+
     public String addOneDay(String rectime){
         Calendar calendar =new GregorianCalendar();
         java.util.Date date = null;
