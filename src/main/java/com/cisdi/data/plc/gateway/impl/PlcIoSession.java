@@ -106,16 +106,17 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
                     oracle.queryInsertData(testcode);
                     oracle.upData(testcode,testCodeValue,date);
 
-                    //写入到s_tele_data数据表
-                    //数据表里存在当前testcod
-                    if( oracle.getNum(testcode)!=0){
-                        //先需要找到当前testcode对应的开始时间最新一条数据,将date写入到结束时间end_time,完成数据的有效周期。
-                        oracle.UpdateEndTIME(testcode,date);
-                    }
-                    //数据表里面没有记录过这个testcode，则直接写入数据。
-                    oracle.insetTeleData(testcode,value,date);
-                    //记录插入电文的数量
-                    oracle.insertnum(vo.getMsgKey(),date,num);
+//                    //写入到s_tele_data数据表
+//                    //数据表里存在当前testcod
+//                    if( oracle.getNum(testcode)!=0){
+//                        //先需要找到当前testcode对应的开始时间最新一条数据,将date写入到结束时间end_time,完成数据的有效周期。
+//                        oracle.UpdateEndTIME(testcode,date);
+//                    }
+//                    //数据表里面没有记录过这个testcode，则直接写入数据。
+//                    oracle.insetTeleData(testcode,value,date);
+//                    //记录插入电文的数量
+//                    oracle.insertnum(vo.getMsgKey(),date,num);
+                    insertDataToTeleData(testcode,date,value,num,vo.getMsgKey());
                 }catch (Exception e){
                     logger.error("检查检化验报文内容是否正确",e.getLocalizedMessage());
                 }
@@ -152,15 +153,15 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
 
                     //写入到s_tele_date表中的数据
                     if(index.equals("2")||index.equals("4")||index.equals("5")||index.equals("6")||index.equals("1")||index.equals("0")){
-
-                        if( oracle.getNum(index_id)!=0){
-                            //如果num不为0，先需要找到当前index_id对应的开始时间最新一条数据,追加date写入到结束时间。
-                            oracle.UpdateEndTIME(index_id,date);
-                        }
-                             //如果num为0，代表数据表里面没有记录过这个index_id。则直接写入数据。
-                            oracle.insetTeleData(index_id,value,date);
-                            //记录插入的条数
-                            oracle.insertnum(vo.getMsgKey(),date,yieldnum);
+//                        if( oracle.getNum(index_id)!=0){
+//                            //如果num不为0，先需要找到当前index_id对应的开始时间最新一条数据,追加date写入到结束时间。
+//                            oracle.UpdateEndTIME(index_id,date);
+//                        }
+//                             //如果num为0，代表数据表里面没有记录过这个index_id。则直接写入数据。
+//                            oracle.insetTeleData(index_id,value,date);
+//                            //记录插入的条数
+//                            oracle.insertnum(vo.getMsgKey(),date,yieldnum);
+                        insertDataToTeleData(index_id,date,value,yieldnum,vo.getMsgKey());
                     }else {
                         return;
                     }
@@ -186,15 +187,16 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
                         oracle.insertWaterHour(valueAvg, strDate);
                     }
 
-                    //写入到s_tele_data数据表里
-                    if( oracle.getNum(index_id)!=0){
-                        //如果num不为0，先需要找到当前index_id对应的开始时间最新一条数据,将date写入到结束时间。
-                        oracle.UpdateEndTIME(index_id,date);
-                    }
-                    //如果num为0，代表数据表里面没有记录过这个index_id。则直接写入数据。
-                    oracle.insetTeleData(index_id,value,date);
-                    //记录插入的条数
-                    oracle.insertnum(vo.getMsgKey(),date,waternum);
+//                    //写入到s_tele_data数据表里
+//                    if( oracle.getNum(index_id)!=0){
+//                        //如果num不为0，先需要找到当前index_id对应的开始时间最新一条数据,将date写入到结束时间。
+//                        oracle.UpdateEndTIME(index_id,date);
+//                    }
+//                    //如果num为0，代表数据表里面没有记录过这个index_id。则直接写入数据。
+//                    oracle.insetTeleData(index_id,value,date);
+//                    //记录插入的条数
+//                    oracle.insertnum(vo.getMsgKey(),date,waternum);
+                    insertDataToTeleData(index_id,date,value,waternum,vo.getMsgKey());
 
                 } catch (Exception e) {
                     logger.info("请检查新水的电文内容是否正确");
@@ -212,6 +214,19 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
 
 		}
 	}
+
+	//接收到电文写入到s_tele_data数据表中，记录电文条数。根据时间判断插入结束时间
+	public void  insertDataToTeleData(String index_id,String date,double value,long teleNum,String teleKey){
+        //写入到s_tele_data数据表里
+        if( oracle.getNum(index_id)!=0){
+            //如果num不为0，先需要找到当前index_id对应的开始时间最新一条数据,将date写入到结束时间。
+            oracle.UpdateEndTIME(index_id,date);
+        }
+        //如果num为0，代表数据表里面没有记录过这个index_id。则直接写入数据。
+        oracle.insetTeleData(index_id,value,date);
+        //记录插入的条数
+        oracle.insertnum(teleKey,date,teleNum);
+    }
 
 	@Override
 	public String[] getDeviceIds() {
