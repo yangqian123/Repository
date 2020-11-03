@@ -32,8 +32,8 @@ public class StartPlcTest {
 		String pwd="zjjk";
         String url="jdbc:oracle:thin:@10.11.11.20:1521:orcl";
 		//公司数据库测试使用
-//        String user="testzjjk";
-//        String pwd="testzjjk";
+//        String user="zjjk";
+//        String pwd="zjjk";
 //        String url="jdbc:oracle:thin:@10.73.9.80:1521:orcl";
 		String parameter ="{\"listenIp\":\"0.0.0.0\",\"listenPort\":5002,\"threadSize\":50,\"timeout\":2000}";
 		String driver="oracle.jdbc.driver.OracleDriver";

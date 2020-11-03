@@ -214,9 +214,19 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
                 } catch (Exception e) {
                     logger.info("请检查球团薪水和电力电文内容是否正确");
                 }
-            }else if (vo.getMsgKey().equals(factory.getIndexkey())){
+            }else if (vo.getMsgKey().equals(factory.getIndexkey())){//绩效指标数据
                 long indexnum = factory.indexnum.incrementAndGet();
-                String date = hexString.substring(0, 12).trim().replace("-", "/");
+                String date = hexString.substring(0, 12).trim();
+                if(date.length()==4){
+                    //年指标数据，数据为例如：2020,需加月和日数据。
+                    date=date+"/12/31";
+                }else if(date.length()==7) {
+                    //月指标数据，数据为例如：2020-01,需加上日数据。
+                    date=date.replace("-", "/")+"/01";
+
+                }else {
+                    date= date.replace("-", "/");
+                }
                 String index_value = hexString.substring(12, 24).trim();
                 String index_id=hexString.substring(24,54).trim();
                 double value = Double.parseDouble(index_value);
