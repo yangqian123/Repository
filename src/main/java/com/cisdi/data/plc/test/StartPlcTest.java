@@ -42,8 +42,9 @@ public class StartPlcTest {
 		String jhykey="KYKW01";
 		String yieldkey="KYKW02";
 		String waterkey="KYKW03";
+		String indexkey="KYKW04";
 		DefaultTcpIoService defaultIoService = new DefaultTcpIoService();
-		SessionFactory factory = new PlcSessionFactory(user,pwd,driver,url,fun,heartbeatkey,jhykey,yieldkey,waterkey);
+		SessionFactory factory = new PlcSessionFactory(user,pwd,driver,url,fun,heartbeatkey,jhykey,yieldkey,waterkey,indexkey);
 		ServiceProviderTest testServiceProvider = new ServiceProviderTest();
 		factory.init(testServiceProvider, null);
 		PlcChannelInitializer<PlcVo> channelInitializer =

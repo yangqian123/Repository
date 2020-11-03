@@ -116,6 +116,8 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
 //                    oracle.insetTeleData(testcode,value,date);
 //                    //记录插入电文的数量
 //                    oracle.insertnum(vo.getMsgKey(),date,num);
+
+                    /*插入数据到数据表s_tele_data，记录电文条数插入数据表s_sockettest*/
                     insertDataToTeleData(testcode,date,value,num,vo.getMsgKey());
                 }catch (Exception e){
                     logger.error("检查检化验报文内容是否正确",e.getLocalizedMessage());
@@ -161,6 +163,8 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
 //                            oracle.insetTeleData(index_id,value,date);
 //                            //记录插入的条数
 //                            oracle.insertnum(vo.getMsgKey(),date,yieldnum);
+
+                        /*插入数据到数据表s_tele_data，记录电文条数插入数据表s_sockettest*/
                         insertDataToTeleData(index_id,date,value,yieldnum,vo.getMsgKey());
                     }else {
                         return;
@@ -173,20 +177,30 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
                 long waternum = factory.watertotallnum.incrementAndGet();
                 logger.info("接收时间:{},电文号:{},长度:{},报文内容:{},第{}条报文", formatime.format(nowDate), vo.getMsgKey(), lengths, hexString, waternum);
                 try {
-                    String index_id="QTXS";
                     String date = hexString.substring(0, 12).trim().replace("-", "/");
                     String index_value = hexString.substring(12, 24).trim();
+                    String index_id=hexString.substring(24,54).trim();
                     double value = Double.parseDouble(index_value);
-                    //插入s_calcresultdata数据表
-                    oracle.insertWater(value, date);
-                    //oracle.insertnum(vo.getMsgKey(), date, waternum);//写入电文条数
-                    double valueAvg = value / 24;
-                    String dateHourMinuteSec = date + " 00:00:00";
-                    List<String> dateResult = getDateList(dateHourMinuteSec);
-                    for (String strDate : dateResult) {
-                        oracle.insertWaterHour(valueAvg, strDate);
-                    }
 
+                    //球团薪水，电文IDLT1500Z1091R，存入数据库为点名QTXS
+                    if(index_id.equals("LT1500Z1091R")){
+                        //插入s_calcresultdata数据表
+                        oracle.insertWater(value, date);
+                        //oracle.insertnum(vo.getMsgKey(), date, waternum);//写入电文条数
+                        double valueAvg = value / 24;
+                        String dateHourMinuteSec = date + " 00:00:00";
+                        List<String> dateResult = getDateList(dateHourMinuteSec);
+                        for (String strDate : dateResult) {
+                            oracle.insertWaterHour(valueAvg, strDate);
+                        }
+                        String index_QTXS="QTXS";
+                        insertDataToTeleData(index_QTXS,date,value,waternum,vo.getMsgKey());
+                    }else{
+                        //插入数据到s_xcomperform表中
+                        oracle.insertComperYield(index_id,value,date);
+                        //插入数据到数据表s_tele_data，记录电文条数插入数据表s_sockettest
+                        insertDataToTeleData(index_id,date,value,waternum,vo.getMsgKey());
+                    }
 //                    //写入到s_tele_data数据表里
 //                    if( oracle.getNum(index_id)!=0){
 //                        //如果num不为0，先需要找到当前index_id对应的开始时间最新一条数据,将date写入到结束时间。
@@ -196,11 +210,19 @@ public class PlcIoSession extends AbstractIoSession implements IoSession {
 //                    oracle.insetTeleData(index_id,value,date);
 //                    //记录插入的条数
 //                    oracle.insertnum(vo.getMsgKey(),date,waternum);
-                    insertDataToTeleData(index_id,date,value,waternum,vo.getMsgKey());
 
                 } catch (Exception e) {
-                    logger.info("请检查新水的电文内容是否正确");
+                    logger.info("请检查球团薪水和电力电文内容是否正确");
                 }
+            }else if (vo.getMsgKey().equals(factory.getIndexkey())){
+                long indexnum = factory.indexnum.incrementAndGet();
+                String date = hexString.substring(0, 12).trim().replace("-", "/");
+                String index_value = hexString.substring(12, 24).trim();
+                String index_id=hexString.substring(24,54).trim();
+                double value = Double.parseDouble(index_value);
+                //插入数据到数据表s_tele_data，记录电文条数插入数据表s_sockettest
+                insertDataToTeleData(index_id,date,value,indexnum,vo.getMsgKey());
+
 
 			}else  {
 

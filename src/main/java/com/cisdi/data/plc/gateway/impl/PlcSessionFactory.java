@@ -11,6 +11,7 @@ public class PlcSessionFactory extends AbstractSessionFactory {
   public final static AtomicLong totallnum = new AtomicLong();
   public final static AtomicLong yieldtotallnum=new AtomicLong();
   public final static AtomicLong watertotallnum=new AtomicLong();
+  public final static AtomicLong indexnum=new AtomicLong();
 
 
     private String user;
@@ -22,12 +23,13 @@ public class PlcSessionFactory extends AbstractSessionFactory {
     private String jhykey;
     private String yieldkey;
     private String waterkey;
+    private String indexkey;
 
     public   PlcSessionFactory(){
         super();
     }
 
-    public   PlcSessionFactory(String user,String pwd,String driver,String url,String fun,String heartbeatkey,String jhykey,String yieldkey,String waterkey){
+    public   PlcSessionFactory(String user,String pwd,String driver,String url,String fun,String heartbeatkey,String jhykey,String yieldkey,String waterkey,String indexkey){
         super();
         this.user=user;
         this.pwd=pwd;
@@ -38,6 +40,7 @@ public class PlcSessionFactory extends AbstractSessionFactory {
         this.fun=fun;
         this.yieldkey=yieldkey;
         this.waterkey=waterkey;
+        this.indexkey=indexkey;
     }
 
     public String getUser() {
@@ -110,6 +113,14 @@ public class PlcSessionFactory extends AbstractSessionFactory {
 
     public void setWaterkey(String waterkey) {
         this.waterkey = waterkey;
+    }
+
+    public String getIndexkey() {
+        return indexkey;
+    }
+
+    public void setIndexkey(String indexkey) {
+        this.indexkey = indexkey;
     }
 
     @Override

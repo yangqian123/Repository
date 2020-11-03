@@ -27,9 +27,11 @@ public class NFDFlightDataTimerTask extends TimerTask {
             PlcSessionFactory.totallnum.set(0);
             PlcSessionFactory.yieldtotallnum.set(0);
             PlcSessionFactory.watertotallnum.set(0);
-            System.out.println("定时任务启动后totallnum"+PlcSessionFactory.totallnum+"时间"+formatime.format(nowDate));
-            System.out.println("定时任务启动后yieldtotallnum:"+PlcSessionFactory.yieldtotallnum+"时间"+formatime.format(nowDate));
-            System.out.println("定时任务启动后watertotallnum:"+PlcSessionFactory.watertotallnum+"时间"+formatime.format(nowDate));
+            PlcSessionFactory.indexnum.set(0);
+            System.out.println("定时任务启动后totallnum:"+PlcSessionFactory.totallnum+",时间"+formatime.format(nowDate));
+            System.out.println("定时任务启动后yieldtotallnum:"+PlcSessionFactory.yieldtotallnum+",时间"+formatime.format(nowDate));
+            System.out.println("定时任务启动后watertotallnum:"+PlcSessionFactory.watertotallnum+",时间"+formatime.format(nowDate));
+            System.out.println("定时任务启动后indexnum:"+PlcSessionFactory.indexnum+",时间"+formatime.format(nowDate));
         }catch (Exception e){
 
             //log.info("信息异常");

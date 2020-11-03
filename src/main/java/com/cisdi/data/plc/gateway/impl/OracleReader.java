@@ -121,7 +121,7 @@ public class OracleReader {
             pre.setDouble(5,Double.parseDouble(value));
             pre.setDate(6, new java.sql.Date(sdf.parse(time).getTime()));
             pre.execute();
-            log.info("sql更新或者添加语句执行成功");
+            log.info("sql更新或者添加日期："+time+"检化验语句执行成功");
         }
         catch (Exception e)
         {
@@ -140,7 +140,7 @@ public class OracleReader {
             pre=conn.prepareStatement(sql);
             pre.setString(1,code);
             pre.execute();
-            log.info("sql查询并写入数据语句执行成功");
+            log.info("sql查询并写入检化验到历史表数据语句执行成功");
         }
         catch (Exception e)
         {
@@ -168,7 +168,7 @@ public class OracleReader {
             pre.setDate(5, new java.sql.Date(sdf.parse(date).getTime()));
             pre.setLong(6,num);
             pre.execute();
-            log.info("sql写入电文历史条数数据语句执行成功");
+            log.info("sql写入日期："+date+",电文历史条数为："+num+"条,插入数据执行成功");
         }
         catch (Exception e)
         {
@@ -201,7 +201,7 @@ public class OracleReader {
             pre.setDate(3, new java.sql.Date(sdf.parse(date).getTime()));
             pre.setDouble(4,index_value);
             pre.execute();
-            log.info("sql写入水量执行成功");
+            log.info("sql写入日期为："+date+"球团薪水水量执行成功");
         }
         catch (Exception e)
         {
@@ -234,7 +234,7 @@ public class OracleReader {
             pre.setDate(3, new java.sql.Date(formatime.parse(date).getTime()));
             pre.setDouble(4,index_value);
             pre.execute();
-            log.info("sql写入球团每小时水量执行成功");
+            log.info("sql写入日期为："+date+"球团每小时水量执行成功");
         }
         catch (Exception e)
         {
@@ -285,7 +285,7 @@ public class OracleReader {
             pre.setString(8,index_id);
 
             pre.execute();
-            log.info("sql写入实绩产量语句执行成功");
+            log.info("sql写入到 s_xcomplandata表,数据点index_id:"+index_id+",sql写入日期："+rectime+"的计划产量产量语句执行成功");
         }
         catch (Exception e)
         {
@@ -325,7 +325,13 @@ public class OracleReader {
             pre.setDouble(7,value);
             pre.setString(8,index_id);
             pre.execute();
-            log.info("sql写入实际产量语句执行成功");
+            String indexIdFirst=index_id.substring(0,1);
+            if(indexIdFirst.equals("E")){
+                log.info("sql写入到 s_xcomperfordata表，数据点index_id:"+index_id+",sql写入日期："+rectime+",电力日数据,插入执行成功");
+            }else {
+                log.info("sql写入到 s_xcomperfordata表,数据点index_id:"+index_id+",sql写入日期："+rectime+",实际产量,插入执行成功");
+            }
+
         }
         catch (Exception e)
         {
@@ -355,7 +361,7 @@ public class OracleReader {
             pre.setDouble(5,value);
             pre.setDate(6, new java.sql.Date(sdf.parse(rectime).getTime()));
             pre.execute();
-            log.info("sql:"+sql+"写入数据成功");
+            log.info("sql写入到S_TELE_DATA表, 数据点index_id:"+index_id+",这条数据插入成功");
         }
         catch (Exception e)
         {
